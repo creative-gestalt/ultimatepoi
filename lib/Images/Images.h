@@ -15,37 +15,45 @@
 class Images {
 
 public:
-  explicit Images(Adafruit_DotStar &strip);
-  void init();
-  void restartImage();
-  void nextImage();
-  void prevImage();
-  void transferScanline();
-  void adjustLineInterval(uint8_t delta);
-  void setImages(int mode);
+    explicit Images(Adafruit_DotStar &strip);
 
-  uint32_t lastLineTime;
-  uint32_t lastImageTime;
-  uint8_t imageNumber;
-  uint8_t imageType{};
-  uint8_t *imagePalette{};
-  uint8_t *imagePixels{};
-  uint8_t palette[16][3]{};
-  size_t imageLines{};
-  size_t imageLine{};
-  uint8_t lineIntervalIndex;
-  uint16_t lineInterval;
-  const PROGMEM Image *currentImages;
-  uint8_t currentImageCount;
-  uint16_t lineTable[5]{};
+    void init();
+
+    void restartImage();
+
+    void nextImage();
+
+    void prevImage();
+
+    void transferScanline();
+
+    void adjustLineInterval(uint8_t delta);
+
+    void setImages(int mode);
+
+    uint32_t lastLineTime;
+    uint32_t lastImageTime;
+    uint8_t imageNumber;
+    uint8_t imageType{};
+    uint8_t *imagePalette{};
+    uint8_t *imagePixels{};
+    uint8_t palette[16][3]{};
+    size_t imageLines{};
+    size_t imageLine{};
+    const PROGMEM Image *currentImages;
+    uint8_t currentImageCount;
+    int microDelay;
 
 private:
-  Adafruit_DotStar *stripObj;
+    Adafruit_DotStar *stripObj;
 
-  void transferPalette1();
-  void transferPalette4();
-  void transferPalette8();
-  void transferTrueColor();
+    void transferPalette1();
+
+    void transferPalette4();
+
+    void transferPalette8();
+
+    void transferTrueColor();
 };
 
 #endif  // IMAGES_H

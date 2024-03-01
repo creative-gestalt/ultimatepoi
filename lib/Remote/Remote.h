@@ -33,11 +33,11 @@ public:
     static constexpr unsigned int BTN_NONE = 0xFFFF;
     static constexpr unsigned int BTN_AUTOPLAY = 0x9;
     static constexpr unsigned int BTN_MODE = 0xC;
-    static constexpr unsigned int BTN_ONE   = 0x10;
-    static constexpr unsigned int BTN_TWO   = 0x11;
+    static constexpr unsigned int BTN_ONE = 0x10;
+    static constexpr unsigned int BTN_TWO = 0x11;
     static constexpr unsigned int BTN_THREE = 0x12;
-    static constexpr unsigned int BTN_FOUR  = 0x14;
-    static constexpr unsigned int BTN_FIVE  = 0x15;
+    static constexpr unsigned int BTN_FOUR = 0x14;
+    static constexpr unsigned int BTN_FIVE = 0x15;
 };
 
 #endif  // REMOTE_H

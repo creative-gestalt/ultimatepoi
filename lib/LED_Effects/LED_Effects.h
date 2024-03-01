@@ -2,7 +2,7 @@
 #define LED_EFFECTS_H
 
 #include <Arduino.h>
-#include "Adafruit_DotStar.h"
+#include <Adafruit_DotStar.h>
 
 #define PATTERN_COUNT 3
 

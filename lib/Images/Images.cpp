@@ -6,13 +6,7 @@ Images::Images(Adafruit_DotStar &strip) {
   lastLineTime = 0L;
   lastImageTime = 0L;
   imageNumber = 0;
-  lineTable[0] = 1200;
-  lineTable[1] = 1100;
-  lineTable[2] = 900;
-  lineTable[3] = 800;
-  lineTable[4] = 600;
-  lineIntervalIndex = 2;
-  lineInterval = 900;
+  microDelay = 900;
   currentImages = playImages;
   currentImageCount = PLAY_NUM_IMAGES;
 }
@@ -24,40 +18,40 @@ void Images::init() {
   imageType = pgm_read_byte(&imageData->type);
   imageLines = pgm_read_word(&imageData->lines);
   imageLine = 0;
-  imagePalette = (uint8_t *)pgm_read_word(&imageData->palette);
-  imagePixels = (uint8_t *)pgm_read_word(&imageData->pixels);
+  imagePalette = (uint8_t *) pgm_read_word(&imageData->palette);
+  imagePixels = (uint8_t *) pgm_read_word(&imageData->pixels);
 
   if (imageType == PALETTE1 || imageType == PALETTE4) {
-      memcpy_P(palette, imagePalette,  6);
-      memcpy_P(palette, imagePalette, 48);
+    memcpy_P(palette, imagePalette, 6);
+    memcpy_P(palette, imagePalette, 48);
   }
 
   lastImageTime = millis();  // Save time of image init for next auto-cycle
 }
 
 void Images::setImages(int mode) {
-    switch (mode) {
-        case MODE_PLAY:
-            currentImages = playImages;
-            currentImageCount = PLAY_NUM_IMAGES;
-            break;
-        case MODE_PARTY:
-            currentImages = partyImages;
-            currentImageCount = PARTY_NUM_IMAGES;
-            break;
-        case MODE_PERF:
-            currentImages = perfImages;
-            currentImageCount = PERF_NUM_IMAGES;
-            break;
-        case MODE_STUTTER:
-            currentImages = stutterImages;
-            currentImageCount = STUTTER_NUM_IMAGES;
-            break;
-        case MODE_CHASERS:
-            currentImages = chasersImages;
-            currentImageCount = CHASERS_NUM_IMAGES;
-            break;
-    }
+  switch (mode) {
+    case MODE_PLAY:
+      currentImages = playImages;
+      currentImageCount = PLAY_NUM_IMAGES;
+      break;
+    case MODE_PARTY:
+      currentImages = partyImages;
+      currentImageCount = PARTY_NUM_IMAGES;
+      break;
+    case MODE_PERF:
+      currentImages = perfImages;
+      currentImageCount = PERF_NUM_IMAGES;
+      break;
+    case MODE_STUTTER:
+      currentImages = stutterImages;
+      currentImageCount = STUTTER_NUM_IMAGES;
+      break;
+    case MODE_CHASERS:
+      currentImages = chasersImages;
+      currentImageCount = CHASERS_NUM_IMAGES;
+      break;
+  }
 }
 
 void Images::restartImage() {
@@ -92,21 +86,21 @@ void Images::transferScanline() {
   }
 
   if (++imageLine >= imageLines) {
-        imageLine = 0;  // Next scanline, wrap around
+    imageLine = 0;  // Next scanline, wrap around
   }
 }
 
 void Images::adjustLineInterval(uint8_t direction) {
-    if (direction == 1 && lineIntervalIndex < (sizeof(lineTable) / sizeof(lineTable[0]) - 1)) {
-        lineInterval = pgm_read_word(&lineTable[++lineIntervalIndex]);
-    } else if (direction == 2 && lineIntervalIndex > 0) {
-        lineInterval = pgm_read_word(&lineTable[--lineIntervalIndex]);
-    }
-    Serial.println(lineIntervalIndex);
+  if (direction == 1 && microDelay > 500) {
+    microDelay -= 200;
+  } else if (direction == 2 && microDelay < 1500) {
+    microDelay += 200;
+  }
 }
 
 void Images::transferPalette1() {
-  uint8_t pixelNum = 0, byteNum, bitNum, pixels, idx, *ptr = (uint8_t *)&imagePixels[imageLine * stripObj->numPixels() / 8];
+  uint8_t pixelNum = 0, byteNum, bitNum, pixels, idx, *ptr = (uint8_t *) &imagePixels[imageLine *
+                                                                                      stripObj->numPixels() / 8];
 
   for (byteNum = stripObj->numPixels() / 8; byteNum--;) {  // Always padded to next byte
     pixels = pgm_read_byte(ptr++);            // 8 pixels of data (pixel 0 = LSB)
@@ -119,7 +113,7 @@ void Images::transferPalette1() {
 }
 
 void Images::transferPalette4() {
-  uint8_t pixelNum, p1, p2, *ptr = (uint8_t *)&imagePixels[imageLine * stripObj->numPixels() / 2];
+  uint8_t pixelNum, p1, p2, *ptr = (uint8_t *) &imagePixels[imageLine * stripObj->numPixels() / 2];
 
   for (pixelNum = 0; pixelNum < stripObj->numPixels();) {
     p2 = pgm_read_byte(ptr++);  // Data for two pixels...
@@ -134,7 +128,7 @@ void Images::transferPalette4() {
 
 void Images::transferPalette8() {
   uint16_t o;
-  uint16_t pixelNum, *ptr = (uint16_t *)&imagePixels[imageLine * stripObj->numPixels()];
+  uint16_t pixelNum, *ptr = (uint16_t *) &imagePixels[imageLine * stripObj->numPixels()];
 
   for (pixelNum = 0; pixelNum < stripObj->numPixels(); pixelNum++) {
     o = pgm_read_byte(ptr++) * 3;  // Offset into imagePalette
@@ -146,7 +140,7 @@ void Images::transferPalette8() {
 }
 
 void Images::transferTrueColor() {
-  uint16_t pixelNum, r, g, b, *ptr = (uint16_t *)&imagePixels[imageLine * stripObj->numPixels() * 3];
+  uint16_t pixelNum, r, g, b, *ptr = (uint16_t *) &imagePixels[imageLine * stripObj->numPixels() * 3];
 
   for (pixelNum = 0; pixelNum < stripObj->numPixels(); pixelNum++) {
     r = pgm_read_byte(ptr++);

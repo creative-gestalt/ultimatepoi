@@ -15,7 +15,10 @@ void Battery::showBatteryLevel(void) {
   uint16_t mV = readVoltage();
   uint8_t lvl = (mV >= BATT_MAX_MV) ? stripObj->numPixels() : (mV <= BATT_MIN_MV) ? 1
                                                                                   :                                                                                              // Drained
-                                                              1 + ((mV - BATT_MIN_MV) * stripObj->numPixels() + (stripObj->numPixels() / 2)) / (BATT_MAX_MV - BATT_MIN_MV + 1);  // # LEDs lit (1-NUM_LEDS)
+                                                              1 + ((mV - BATT_MIN_MV) * stripObj->numPixels() +
+                                                                   (stripObj->numPixels() / 2)) /
+                                                                  (BATT_MAX_MV - BATT_MIN_MV +
+                                                                   1);  // # LEDs lit (1-NUM_LEDS)
 
   for (uint8_t i = 0; i < lvl; i++) {
     uint8_t g = (i * 5 + 2) / stripObj->numPixels();
@@ -45,12 +48,11 @@ uint16_t Battery::readVoltage() {
   // Instead, repeated readings are taken until four concurrent readings
   // stabilize within 10 mV.
   for (prev = 9999, count = 0; count < 4;) {
-    for (ADCSRA |= _BV(ADSC); ADCSRA & _BV(ADSC);)
-      ;                               // Start, await ADC conv.
+    for (ADCSRA |= _BV(ADSC); ADCSRA & _BV(ADSC););                               // Start, await ADC conv.
     i = ADC;                          // Result
     mV = i ? (1100L * 1023 / i) : 0;  // Scale to millivolts
 
-    if (abs((int)mV - prev) <= 10) {
+    if (abs((int) mV - prev) <= 10) {
       count++;  // +1 stable reading
     } else {
       count = 0;  // too much change, start over

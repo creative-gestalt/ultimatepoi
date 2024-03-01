@@ -36,10 +36,10 @@ bool autoCycle = false;
 
 void setup() {
   // Initialize Serial communication
-  Serial.begin(9600);
-  #if defined(__AVR_ATmega328P__) && (F_CPU == 16000000L)
-    clock_prescale_set(clock_div_1); // Enable 16 MHz on Metro Mini
-  #endif
+  //Serial.begin(9600);
+#if defined(__AVR_ATmega328P__) && (F_CPU == 16000000L)
+  clock_prescale_set(clock_div_1); // Enable 16 MHz on Metro Mini
+#endif
 
   // Initialize the DotStar strip
   strip.begin();
@@ -66,11 +66,7 @@ void toggleAutoCycle() {
 }
 
 void nextMode(uint8_t mode = 10) {
-  if (mode < MODE_COUNT) {
-    currentMode = mode;
-  } else {
-    currentMode = (currentMode + 1) % MODE_COUNT;
-  }
+  currentMode = mode < MODE_COUNT ? mode : (currentMode + 1) % MODE_COUNT;
   images.setImages(currentMode);
   images.restartImage();
 }
@@ -124,15 +120,14 @@ void processIRCommands(uint16_t command) {
         effects.adjustBrightness(-15);
         break;
       case Remote::BTN_FASTER:
-        if (images.lineIntervalIndex == 4) {
+        if (images.microDelay == 500) {
           effects.flashIndicator(0, 255, 255, 4, 100);
         } else {
-          Serial.println(images.lineIntervalIndex);
           images.adjustLineInterval(1);
         }
         break;
       case Remote::BTN_SLOWER:
-        if (images.lineIntervalIndex == 0) {
+        if (images.microDelay == 1500) {
           effects.flashIndicator(255, 0, 255, 4, 100);
         } else {
           images.adjustLineInterval(2);
@@ -198,14 +193,11 @@ void loop() {
   }
 
 
-//  if (((currentTime = micros()) - images.lastLineTime) >= images.lineInterval) {
-    images.transferScanline();
+  images.transferScanline();
 
-    processModePress();
-    IRInterrupt();
+  processModePress();
+  IRInterrupt();
 
-    strip.show();  // Refresh LEDs
-//    images.lastLineTime = currentTime;
-    delayMicroseconds(images.lineInterval);
-//  }
+  strip.show();  // Refresh LEDs
+  delayMicroseconds(images.microDelay);
 }
