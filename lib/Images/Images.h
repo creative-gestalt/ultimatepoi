@@ -5,12 +5,7 @@
 #include "Adafruit_DotStar.h"
 #include "graphics.h"
 
-#define MODE_COUNT 5
-#define MODE_PLAY 0
-#define MODE_PARTY 1
-#define MODE_PERF 2
-#define MODE_STUTTER 3
-#define MODE_CHASERS 4
+#define MODE_COUNT 4
 
 class Images {
 

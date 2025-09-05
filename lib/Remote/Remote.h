@@ -38,6 +38,7 @@ public:
     static constexpr unsigned int BTN_THREE = 0x12;
     static constexpr unsigned int BTN_FOUR = 0x14;
     static constexpr unsigned int BTN_FIVE = 0x15;
+    static constexpr unsigned int BTN_SIX = 0x16;
 };
 
 #endif  // REMOTE_H

@@ -7,8 +7,8 @@ Images::Images(Adafruit_DotStar &strip) {
   lastImageTime = 0L;
   imageNumber = 0;
   microDelay = 900;
-  currentImages = playImages;
-  currentImageCount = PLAY_NUM_IMAGES;
+  currentImages = aImages;
+  currentImageCount = A_NUM_IMAGES;
 }
 
 void Images::init() {
@@ -31,26 +31,30 @@ void Images::init() {
 
 void Images::setImages(int mode) {
   switch (mode) {
-    case MODE_PLAY:
-      currentImages = playImages;
-      currentImageCount = PLAY_NUM_IMAGES;
+    case 0:
+      currentImages = aImages;
+      currentImageCount = A_NUM_IMAGES;
       break;
-    case MODE_PARTY:
-      currentImages = partyImages;
-      currentImageCount = PARTY_NUM_IMAGES;
+    case 1:
+      currentImages = bImages;
+      currentImageCount = B_NUM_IMAGES;
       break;
-    case MODE_PERF:
-      currentImages = perfImages;
-      currentImageCount = PERF_NUM_IMAGES;
+    case 2:
+      currentImages = cImages;
+      currentImageCount = C_NUM_IMAGES;
       break;
-    case MODE_STUTTER:
-      currentImages = stutterImages;
-      currentImageCount = STUTTER_NUM_IMAGES;
+    case 3:
+      currentImages = dImages;
+      currentImageCount = D_NUM_IMAGES;
       break;
-    case MODE_CHASERS:
-      currentImages = chasersImages;
-      currentImageCount = CHASERS_NUM_IMAGES;
-      break;
+//    case 4:
+//      currentImages = eImages;
+//      currentImageCount = E_NUM_IMAGES;
+//      break;
+//    case 5:
+//      currentImages = fImages;
+//      currentImageCount = F_NUM_IMAGES;
+//      break;
   }
 }
 
@@ -128,7 +132,8 @@ void Images::transferPalette4() {
 
 void Images::transferPalette8() {
   uint16_t o;
-  uint16_t pixelNum, *ptr = (uint16_t *) &imagePixels[imageLine * stripObj->numPixels()];
+  uint16_t pixelNum;
+  uint8_t *ptr = (uint8_t *) &imagePixels[imageLine * stripObj->numPixels()];
 
   for (pixelNum = 0; pixelNum < stripObj->numPixels(); pixelNum++) {
     o = pgm_read_byte(ptr++) * 3;  // Offset into imagePalette
